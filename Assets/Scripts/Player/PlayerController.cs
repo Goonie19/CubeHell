@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Shooters;
 
 namespace Player
 {
@@ -37,11 +38,11 @@ namespace Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.GetComponent<Bullet>())
-                PlayEffect();
+            if (other.GetComponentInParent<Bullet>())
+                PlayAvoidEffect();
         }
 
-        void PlayEffect()
+        void PlayAvoidEffect()
         {
             Sequence avoidSeq = DOTween.Sequence();
 
