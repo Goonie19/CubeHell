@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Player;
 
 namespace Shooters
 {
@@ -12,11 +13,15 @@ namespace Shooters
         [Header("Rotation Parameters")]
         public float RotationSpeed;
 
+        [Header("Disapearing distance from center")]
+        public float DisappearingDistance;
+
         private Transform _bulletCube;
 
         void Start()
         {
-            _bulletCube = transform.GetChild(0);    
+            _bulletCube = transform.GetChild(0);
+
         }
 
         void Update()
@@ -24,6 +29,9 @@ namespace Shooters
             transform.Translate(Vector3.forward * Speed * Time.deltaTime);
 
             _bulletCube.Rotate(Vector3.up * RotationSpeed * Time.deltaTime);
+
+            if (Vector3.Distance(transform.position, new Vector3(0, transform.position.y, 0)) > DisappearingDistance)
+                gameObject.SetActive(false);
         }
     }
 }
