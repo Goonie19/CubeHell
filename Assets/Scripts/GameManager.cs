@@ -6,31 +6,34 @@ using Utils;
 public class GameManager : Singleton<GameManager>
 {
 
-    private State _state;
+    public float EatingTime;
 
-    // Start is called before the first frame update
-    void Start()
+    public float desiredSize;
+
+    public float bulletSpeed;
+
+    [SerializeField]private State _state;
+
+    private float _eatingTimer;
+
+    public State State
     {
-        
+        get { return _state; }
+    }
+
+    private void Awake()
+    {
+        _state = State.Avoiding;
     }
 
     // Update is called once per frame
     void Update()
     {
-        switch(_state)
-        {
-            case State.Avoiding:;
-                
-                break;
-            case State.Eating:;
-                
-                break;
-            case State.Pause:;
+        
+    }
 
-                break;
-            case State.End:;
-
-                break;
-        }
+    public void ChangeState(State s)
+    {
+        _state = s;
     }
 }

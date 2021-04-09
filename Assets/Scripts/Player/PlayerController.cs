@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using Shooters;
+using UnityEngine.UI;
 
 namespace Player
 {
@@ -10,8 +11,9 @@ namespace Player
     {
 
         public float Speed;
-        public Material AvoidMaterial;
+        public float avoidAdding;
 
+        public Slider AvoidSlider;
 
         private Vector2 _input;
         private Rigidbody _rb;
@@ -34,23 +36,7 @@ namespace Player
             _input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
             
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.GetComponentInParent<Bullet>())
-                PlayAvoidEffect();
-        }
-
-        void PlayAvoidEffect()
-        {
-            Sequence avoidSeq = DOTween.Sequence();
-
-            avoidSeq.Append(AvoidMaterial.DOFade(1, 0.2f).SetEase(Ease.InQuad));
-            avoidSeq.Append(AvoidMaterial.DOFade(0, 0.2f).SetEase(Ease.InQuad));
-
-            avoidSeq.Play();
-        }
+        }        
 
     }
 }

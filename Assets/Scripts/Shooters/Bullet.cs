@@ -7,32 +7,55 @@ namespace Shooters
 {
     public class Bullet : MonoBehaviour
     {
-        [Header("Movement Parameters")]
-        public float Speed;
-
-        [Header("Rotation Parameters")]
+        [Header("Rotation Parameter")]
         public float RotationSpeed;
 
         [Header("Disapearing distance from center")]
         public float DisappearingDistance;
 
         private Transform _bulletCube;
+        private ParticleSystem _dieParticles;
+        private float _bulletSpeed;
 
-        void Start()
+        void Awake()
         {
             _bulletCube = transform.GetChild(0);
+            _dieParticles = GetComponentInChildren<ParticleSystem>();
+            _bulletSpeed = GameManager.Instance.bulletSpeed;
+        }
+
+        private void OnEnable()
+        {
+            if (!_bulletCube.gameObject.activeInHierarchy)
+                _bulletCube.gameObject.SetActive(true);
 
         }
 
         void Update()
         {
-            transform.Translate(Vector3.forward * Speed * Time.deltaTime);
+            if(_bulletCube.gameObject.activeInHierarchy)
+                transform.Translate(Vector3.forward * _bulletSpeed * Time.deltaTime);
 
             _bulletCube.Rotate(Vector3.up * RotationSpeed * Time.deltaTime);
 
             if (Vector3.Distance(transform.position, new Vector3(0, transform.position.y, 0)) > DisappearingDistance)
                 gameObject.SetActive(false);
         }
+
+        public void Break()
+        {
+            _dieParticles.Play();
+            _bulletCube.gameObject.SetActive(false);
+            StartCoroutine(Die());
+        }
+
+        IEnumerator Die()
+        {
+            yield return new WaitForSeconds(0.2f);
+
+            gameObject.SetActive(false);
+        }
+        
     }
 }
 
