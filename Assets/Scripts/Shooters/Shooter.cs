@@ -30,8 +30,11 @@ namespace Shooters
             if (_timer > 0)
                 _timer -= Time.deltaTime;
             else
-                Shoot();
+                if(GameManager.Instance.State == State.Avoiding || GameManager.Instance.State == State.Eating)
+                    Shoot();
         }
+
+        #region SHOOTING METHODS
 
         public void Shoot()
         {
@@ -59,6 +62,8 @@ namespace Shooters
         { 
             return pool.Find(item => item.activeInHierarchy == false);
         }
+
+        #endregion
     }
 }
 
