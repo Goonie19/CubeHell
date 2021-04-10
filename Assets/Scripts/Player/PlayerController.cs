@@ -13,8 +13,6 @@ namespace Player
         public float Speed;
         public float avoidAdding;
 
-        public Slider AvoidSlider;
-
         private Vector2 _input;
         private Rigidbody _rb;
 

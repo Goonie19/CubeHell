@@ -42,11 +42,17 @@ namespace Shooters
                 gameObject.SetActive(false);
         }
 
+        #region BULLET IMPACTS
         public void Break()
         {
             _dieParticles.Play();
             _bulletCube.gameObject.SetActive(false);
             StartCoroutine(Die());
+        }
+
+        public void EatBullet()
+        {
+            gameObject.SetActive(false);
         }
 
         IEnumerator Die()
@@ -55,7 +61,7 @@ namespace Shooters
 
             gameObject.SetActive(false);
         }
-        
+        #endregion
     }
 }
 

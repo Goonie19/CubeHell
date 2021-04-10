@@ -14,12 +14,8 @@ namespace Player
 
         private float _avoidAdding;
 
-        private Slider _avoidBar;
-
-
         private void Start()
         {
-            _avoidBar = GetComponentInParent<PlayerController>().AvoidSlider;
             _avoidAdding = GetComponentInParent<PlayerController>().avoidAdding;
         }
 
@@ -29,10 +25,9 @@ namespace Player
             {
                 if(GameManager.Instance.State == State.Avoiding)
                 {
-                    PlayAvoidEffect();
+                    PlayDangerEffect();
                     
                 }
-                Debug.Log(GameManager.Instance.State);
             }
                 
         }
@@ -40,10 +35,13 @@ namespace Player
         private void OnTriggerExit(Collider other)
         {
             if (GameManager.Instance.State == State.Avoiding)
-                Avoid();
+            {
+                GameManager.Instance.AddToAvoidBar(_avoidAdding);
+                GameManager.Instance.AvoidEffect();
+            }
         }
 
-        void PlayAvoidEffect()
+        void PlayDangerEffect()
         {
             Sequence avoidSeq = DOTween.Sequence();
 
@@ -53,12 +51,7 @@ namespace Player
             avoidSeq.Play();
         }
 
-        void Avoid()
-        {
-            _avoidBar.value += _avoidAdding;
-            if (_avoidBar.value >= _avoidBar.maxValue)
-                GameManager.Instance.ChangeState(State.Eating);
-        }
+       
 
 
     }
