@@ -14,9 +14,14 @@ namespace Player
 
         private float _avoidAdding;
 
+        private AudioSource _effectSource;
+        private AudioClip _avoidSound;
+
         private void Start()
         {
             _avoidAdding = GetComponentInParent<PlayerController>().avoidAdding;
+            _effectSource = GetComponentInParent<PlayerController>().Asource;
+            _avoidSound = GetComponentInParent<PlayerController>().Avoid;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -36,6 +41,8 @@ namespace Player
         {
             if (GameManager.Instance.State == State.Avoiding)
             {
+                _effectSource.pitch = Random.Range(0.8f, 1.2f);
+                _effectSource.PlayOneShot(_avoidSound);
                 GameManager.Instance.AddToAvoidBar(_avoidAdding);
                 GameManager.Instance.AvoidEffect();
             }

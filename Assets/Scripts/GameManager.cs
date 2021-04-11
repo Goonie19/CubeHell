@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using Utils;
+using UnityEngine.Audio;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -19,8 +20,13 @@ public class GameManager : Singleton<GameManager>
     [Header("UI Management")]
     public Slider AvoidSlider;
     public Image BarFill;
-    public GameObject EatText;
     public GameObject InitGamePanel;
+
+    [Header("Music Management")]
+    public AudioMixerSnapshot MenuSnapshot;
+    public AudioMixerSnapshot AvoidSnapShot;
+    public AudioMixerSnapshot EatingSnapShot;
+    public AudioMixerSnapshot EndSnapShot;
 
 
     [SerializeField]private State _state;
@@ -94,6 +100,7 @@ public class GameManager : Singleton<GameManager>
         if (AvoidSlider.value >= AvoidSlider.maxValue)
         {
             _state = State.Eating;
+            
             StartCoroutine(EatingTimerCount());
         }
     }
@@ -105,8 +112,7 @@ public class GameManager : Singleton<GameManager>
         AvoidSlider.minValue = 0;
         AvoidSlider.maxValue = _eatingTimer;
         BarFill.color = Color.green;
-        EatText.GetComponent<Text>().text = "EAT!";
-        TextEffect();
+        ChangeMusic();
 
         while (_eatingTimer >= 0)
         {
@@ -121,33 +127,53 @@ public class GameManager : Singleton<GameManager>
             AvoidSlider.maxValue = 1;
             AvoidSlider.value = 0;
             BarFill.color = Color.red;
-            EatText.GetComponent<Text>().text = "AVOID!";
-            TextEffect();
+            ChangeMusic();
 
         }
     }
 
-    void TextEffect()
+    #endregion
+
+    #region UI METHODS
+
+    public void SelectButton(GameObject button)
     {
-        EatText.SetActive(true);
 
-        Sequence texSeq = DOTween.Sequence();
+        button.transform.DOScale(1.3f, 0.2f).SetEase(Ease.InQuad).Play();
+    }
 
-        texSeq.Append(EatText.transform.DOScale(2, .5f).SetEase(Ease.Linear));
+    public void DeselectButton(GameObject button)
+    {
 
-        texSeq.Append(EatText.transform.DOScale(.1f, .01f).SetEase(Ease.Linear));
+        button.transform.DOScale(1f, 0.2f).SetEase(Ease.InQuad).Play();
+    }
 
-        texSeq.Play();
+    public void OpenPanel(GameObject panel)
+    {
 
-        texSeq.onComplete = () => { EatText.SetActive(false); };
+        panel.transform.DOScale(1f, 0.2f).SetEase(Ease.InQuad).Play();
+    }
+
+    public void ClosePanel(GameObject panel)
+    {
+        Sequence panelSeq = DOTween.Sequence();
+
+        panelSeq.Append(panel.transform.DOScale(0.001f, 0.2f).SetEase(Ease.InQuad).Play());
+
+        panelSeq.onComplete = () => { panel.SetActive(false); };
+
+
     }
 
     #endregion
+
 
     public void StartGame()
     {
         AvoidSlider.gameObject.SetActive(true);
         AvoidSlider.transform.GetComponent<CanvasGroup>().alpha = 0;
+        AvoidSnapShot.TransitionTo(2f);
+
         Sequence panelSeq = DOTween.Sequence();
 
         panelSeq.Append(InitGamePanel.transform.GetComponent<CanvasGroup>().DOFade(0, 2f).SetEase(Ease.Linear));
@@ -155,12 +181,26 @@ public class GameManager : Singleton<GameManager>
 
         panelSeq.Play();
 
-        panelSeq.onComplete = () => { ChangeState(State.Avoiding); };
+        
+
+        panelSeq.onComplete = () => { ChangeState(State.Avoiding);  };
+
 
     }
 
     public void ChangeState(State s)
     {
         _state = s;
+    }
+
+    public void ChangeMusic()
+    {
+        switch(_state)
+        {
+            case State.Pause: MenuSnapshot.TransitionTo(2f);break;
+            case State.Avoiding: AvoidSnapShot.TransitionTo(2f);break;
+            case State.Eating: EatingSnapShot.TransitionTo(2f);break;
+            case State.End: EndSnapShot.TransitionTo(2f);break;
+        }
     }
 }

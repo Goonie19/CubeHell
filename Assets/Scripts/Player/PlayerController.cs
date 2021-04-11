@@ -13,6 +13,9 @@ namespace Player
         public float Speed;
         public float avoidAdding;
 
+        public AudioClip Hit, Eat, Avoid;
+        public AudioSource Asource;
+
         private Vector2 _input;
         private Rigidbody _rb;
 
