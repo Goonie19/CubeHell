@@ -45,6 +45,7 @@ namespace Player
                 _effectSource.PlayOneShot(_avoidSound);
                 GameManager.Instance.AddToAvoidBar(_avoidAdding);
                 GameManager.Instance.AvoidEffect();
+                GameManager.Instance.setDodgedBullets(GameManager.Instance.getDodgedBullets() + 1);
             }
         }
 

@@ -49,6 +49,7 @@ namespace Player
                     HitEffect();
                     _effectSource.pitch = Random.Range(0.8f, 1.2f);
                     _effectSource.PlayOneShot(_hit);
+                    GameManager.Instance.setHitBullets(GameManager.Instance.getHitBullets() + 1);
                 } else if(GameManager.Instance.State == State.Eating)
                 {
                     if (GameManager.Instance.desiredSize > transform.parent.localScale.x)
@@ -63,6 +64,7 @@ namespace Player
                     {
                         GameManager.Instance.ChangeState(State.End);
                         GameManager.Instance.ChangeMusic();
+                        GameManager.Instance.EndGame();
                     }
                 } 
 
@@ -80,11 +82,10 @@ namespace Player
 
         void EatEffect()
         {
-            float endValue = _playerCube.transform.localScale.x * 1.3f * 0.8f;
 
             Sequence CubeSeq = DOTween.Sequence();
 
-            CubeSeq.Append(_playerCube.transform.DOScale(_playerCube.transform.localScale * 1.02f, 0.2f).SetEase(Ease.OutBack));
+            CubeSeq.Append(_playerCube.transform.DOScale(_playerCube.transform.localScale * 1.01f, 0.2f).SetEase(Ease.OutBack));
 
 
 

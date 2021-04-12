@@ -17,10 +17,16 @@ public class GameManager : Singleton<GameManager>
 
     public float bulletSpeed;
 
+    public GameObject Player;
+
     [Header("UI Management")]
     public Slider AvoidSlider;
     public Image BarFill;
     public GameObject InitGamePanel;
+    public GameObject EndPanel;
+    public Text Dodged;
+    public Text Hit;
+
 
     [Header("Music Management")]
     public AudioMixerSnapshot MenuSnapshot;
@@ -32,6 +38,11 @@ public class GameManager : Singleton<GameManager>
     [SerializeField]private State _state;
 
     private float _eatingTimer;
+
+    private int _dodgedBullets;
+
+    private int _hitBullets;
+
 
     public State State
     {
@@ -151,6 +162,7 @@ public class GameManager : Singleton<GameManager>
     public void OpenPanel(GameObject panel)
     {
 
+
         panel.transform.DOScale(1f, 0.2f).SetEase(Ease.InQuad).Play();
     }
 
@@ -158,7 +170,7 @@ public class GameManager : Singleton<GameManager>
     {
         Sequence panelSeq = DOTween.Sequence();
 
-        panelSeq.Append(panel.transform.DOScale(0.001f, 0.2f).SetEase(Ease.InQuad).Play());
+        panelSeq.Append(panel.transform.DOScale(0.001f, 0.2f).SetEase(Ease.InQuad));
 
         panelSeq.onComplete = () => { panel.SetActive(false); };
 
@@ -173,6 +185,7 @@ public class GameManager : Singleton<GameManager>
         AvoidSlider.gameObject.SetActive(true);
         AvoidSlider.transform.GetComponent<CanvasGroup>().alpha = 0;
         AvoidSnapShot.TransitionTo(2f);
+        BarFill.color = Color.red;
 
         Sequence panelSeq = DOTween.Sequence();
 
@@ -183,9 +196,64 @@ public class GameManager : Singleton<GameManager>
 
         
 
-        panelSeq.onComplete = () => { ChangeState(State.Avoiding);  };
+        panelSeq.onComplete = () => { ChangeState(State.Avoiding); InitGamePanel.SetActive(false); };
 
 
+    }
+
+    public void BackToMenu()
+    {
+        InitGamePanel.SetActive(true);
+        MenuSnapshot.TransitionTo(4f);
+
+        Sequence panelSeq = DOTween.Sequence();
+
+        panelSeq.Append(EndPanel.transform.GetComponent<CanvasGroup>().DOFade(0, 2f).SetEase(Ease.Linear));
+        panelSeq.Join(AvoidSlider.transform.GetComponent<CanvasGroup>().DOFade(0, 2f).SetEase(Ease.Linear));
+        panelSeq.Append(InitGamePanel.transform.GetComponent<CanvasGroup>().DOFade(1, 2f).SetEase(Ease.Linear));
+        panelSeq.Join(Player.transform.DOScale(1f, 2f).SetEase(Ease.InQuad));
+
+        panelSeq.Play();
+
+        panelSeq.onComplete = () => { ChangeState(State.Pause); EndPanel.SetActive(false); _dodgedBullets = 0; _hitBullets = 0; };
+    }
+
+    public void EndGame()
+    {
+        EndPanel.SetActive(true);
+
+        Sequence panelSeq = DOTween.Sequence();
+
+        panelSeq.Append(EndPanel.transform.GetComponent<CanvasGroup>().DOFade(1, 2f).SetEase(Ease.Linear));
+
+        panelSeq.Join(AvoidSlider.transform.GetComponent<CanvasGroup>().DOFade(0, 2f).SetEase(Ease.Linear));
+
+        panelSeq.Play();
+
+
+
+    }
+
+    public int getDodgedBullets()
+    {
+        return _dodgedBullets;
+    }
+
+    public int getHitBullets()
+    {
+        return _hitBullets;
+    }
+
+    public void setDodgedBullets(int d)
+    {
+        _dodgedBullets = d;
+        Dodged.text = "" + _dodgedBullets;
+    }
+
+    public void setHitBullets(int h)
+    {
+        _hitBullets = h;
+        Hit.text = "" + _hitBullets;
     }
 
     public void ChangeState(State s)
